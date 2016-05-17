@@ -1,0 +1,7 @@
+<h1>Blog</h1>
+
+<?php foreach ($this->users as $user): ?>
+<article>
+    <h1 id="Account<?= $user->email ?>"><?= $user->email . $user->password ?></h1>
+</article>
+<?php endforeach ?>
