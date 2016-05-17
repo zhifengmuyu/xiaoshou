@@ -1,5 +1,8 @@
 <h1><?php echo $this->translate('Register'); ?></h1>
 
+<?php
+//\Zend\Debug\Debug::dump($this->registerForm);
+?>
 <?php echo $this->form()->openTag($this->registerForm) ?>
     <dl class="zend_form">
     <?php foreach ($this->registerForm->getFieldsets()['register']->getElements() as $element): ?>

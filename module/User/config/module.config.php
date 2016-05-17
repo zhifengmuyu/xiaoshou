@@ -1,6 +1,8 @@
 <?php
 namespace User;
 
+use Zend\Crypt\Password\Bcrypt;
+
 return array(
     'doctrine' => array(
         'authentication' => array(
@@ -10,7 +12,9 @@ return array(
                 'identity_property' => 'email',
                 'credential_property' => 'password',
                 'credential_callable' => function(Entity\Users $user, $passwordGiven) {
-                    return md5($passwordGiven) == $user->getPassword();
+                    $bcrypt = new Bcrypt();
+                    $result = $bcrypt->verify($passwordGiven, $user->getPassword());
+                    return $result;
                 },
             ),
         ),
