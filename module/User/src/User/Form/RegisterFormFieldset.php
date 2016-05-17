@@ -11,58 +11,58 @@ class RegisterFormFieldset extends Fieldset implements InputFilterProviderInterf
 {
     public function __construct(ObjectManager $objectManager)
     {
-      parent::__construct('register');
+        parent::__construct('register');
  
-      $this->setHydrator(new DoctrineHydrator($objectManager))
-           ->setObject(new Users());
+        $this->setHydrator(new DoctrineHydrator($objectManager))
+             ->setObject(new Users());
  
-      $this->add(array(
-        'name' => 'id',
-        'attributes' => array(
-          'type' => 'hidden',
-        ),
-        'options' => array(
-          'label' => ' ',
-        ),
-      ));
+        $this->add(array(
+            'name' => 'id',
+            'attributes' => array(
+                'type' => 'hidden',
+            ),
+            'options' => array(
+                'label' => ' ',
+            ),
+        ));
  
-      $this->add(array(
-        'name' => 'email',
-        'options' => array(
-          'label' => 'Email: ',
-        ),
-        'attributes' => array(
-          'type' => 'text'
-        ),
-      ));
+        $this->add(array(
+            'name' => 'email',
+            'options' => array(
+                'label' => 'Email: ',
+            ),
+            'attributes' => array(
+                'type' => 'text'
+            ),
+        ));
  
-      $this->add(array(
-        'name' => 'password',
-        'options' => array(
-          'label' => 'Password: ',
-        ),
-        'attributes' => array(
-          'type' => 'password'
-        )
-      ));
-      $this->add(array(
-          'type'       => 'password',
-          'name'       => 'passwordVerify',
-          'options'    => array(
-              'label' => 'Verify password: ',
-          ),
-      ));
-      $this->add(array(
-          'name' => 'submit',
-          'type' => 'Submit',
-          'options' => array(
-              'label' => ' ',
-          ),
-          'attributes' => array(
-              'value' => 'Submit',
-              'id' => 'submitbutton',
-          ),
-      ));
+        $this->add(array(
+            'name' => 'password',
+            'options' => array(
+                'label' => 'Password: ',
+            ),
+            'attributes' => array(
+                'type' => 'password'
+            )
+        ));
+        $this->add(array(
+            'type'       => 'password',
+            'name'       => 'passwordVerify',
+            'options'    => array(
+                'label' => 'Verify password: ',
+            ),
+        ));
+        $this->add(array(
+            'name' => 'submit',
+            'type' => 'Submit',
+            'options' => array(
+                'label' => ' ',
+            ),
+            'attributes' => array(
+                'value' => 'Submit',
+                'id' => 'submitbutton',
+            ),
+        ));
     }
  
     /**
