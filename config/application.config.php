@@ -11,8 +11,7 @@ return array(
         'DoctrineModule',
         'DoctrineORMModule',
         'User',
-        //'ZfcBase',
-        //'ZfcUser',
+        'Sp',
     ),
     'module_listener_options' => array(
         'module_paths' => array(

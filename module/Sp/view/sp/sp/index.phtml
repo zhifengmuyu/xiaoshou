@@ -1,0 +1,8 @@
+<h1>Products</h1>
+
+<?php foreach ($this->products as $product): ?>
+<article>
+    <h1><?= $product->getPName() ?></h1>
+    <p><?= $product->getPDescription() ?></p>
+</article>
+<?php endforeach ?>
