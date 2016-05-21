@@ -1,6 +1,6 @@
 create table products(
     p_id serial not null primary key,
-    p_xref_u_id integer not null references users (id),
+    p_xref_u_id integer not null references users (u_id),
     p_type varchar,
     p_name varchar,
     p_description varchar,

@@ -1,5 +1,17 @@
 <h1>Products</h1>
-
+<a href='sp/add'><?php echo $this->translate('Add') ?></a>
+<table>
+	<?php foreach ($this->products as $product): ?>
+		<tr>
+			<td><?php echo $product->getPName() ?></td>
+			<td><?php echo $product->getPDescription() ?></td>
+			<td>
+				<a href="sp/edit/<?php echo $product->getId() ?>">Edit</a>
+				<a href="sp/delete/<?php echo $product->getId() ?>">Delete</a>
+			</td>
+		</tr>
+	<?php endforeach ?>
+</table>
 <?php foreach ($this->products as $product): ?>
 <article>
     <h1><?= $product->getPName() ?></h1>

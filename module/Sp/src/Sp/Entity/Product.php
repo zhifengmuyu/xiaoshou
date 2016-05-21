@@ -15,7 +15,7 @@ class Product
     /** 
     * @ORM\Id
     * @ORM\GeneratedValue(strategy="AUTO")
-    * @ORM\Column(type="integer",name="id") 
+    * @ORM\Column(type="integer",name="p_id") 
     */
     protected $id;
 
@@ -40,7 +40,7 @@ class Product
     protected $p_description;
     
     /**
-    * @ORM\Column(type="datetime")
+    * @ORM\Column(type="datetime",nullable=false)
     */
     protected $p_creation;
 
@@ -109,14 +109,14 @@ class Product
         return $this->p_deleted;
     }
 
-    public function setPCreation($deleted) 
+    public function setPCreation($creation) 
     {
-        $this->p_deleted = $deleted;
+        $this->p_creation = $creation;
     }
 
     public function getPCreation() 
     {
-        return $this->p_deleted;
+        return $this->p_creation;
     }
 
     public function getArrayCopy()

@@ -14,7 +14,6 @@ class RegisterForm extends Form
 
         $this->setHydrator(new DoctrineHydrator($objectManager));
         $registerFormFieldset = new RegisterFormFieldset($objectManager);
-        $registerFormFieldset->remove('id');
         $registerFormFieldset->setUseAsBaseFieldset(true);
         $registerFormFieldset->setOptions(array(
             'label' => ' ',

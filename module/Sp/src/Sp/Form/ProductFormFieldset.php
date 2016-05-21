@@ -17,7 +17,7 @@ class ProductFormFieldset extends Fieldset implements InputFilterProviderInterfa
              ->setObject(new Product());
 
         $this->add(array(
-            'name' => 'id',
+            'name' => 'p_id',
             'options' => array(
                 'label' => ' ',
             ),
@@ -28,6 +28,7 @@ class ProductFormFieldset extends Fieldset implements InputFilterProviderInterfa
 
         $this->add(array(
             'name'    => 'p_xref_u_id',
+            'type' => 'hidden',
             'options' => array(
                 'label' => ' ',
                 'class' => 'hidden',
@@ -76,21 +77,23 @@ class ProductFormFieldset extends Fieldset implements InputFilterProviderInterfa
 
         $this->add(array(
             'name'    => 'p_creation',
+            'type' => 'hidden',
             'options' => array(
                 'label' => 'Creation: '
             ),
             'attributes' => array(
-                'type' => 'text',
+                'type' => 'hidden',
             ),
         ));
 
         $this->add(array(
             'name'    => 'p_deleted',
+            'type' => 'hidden',
             'options' => array(
                 'label' => 'Deleted: '
             ),
             'attributes' => array(
-                'type' => 'text',
+                'type' => 'hidden',
             ),
         ));
 
@@ -116,7 +119,7 @@ class ProductFormFieldset extends Fieldset implements InputFilterProviderInterfa
     public function getInputFilterSpecification()
     {
         return array(
-            'id' => array(
+            'p_id' => array(
                 'required' => false,
             ),
 

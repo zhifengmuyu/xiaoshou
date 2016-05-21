@@ -9,11 +9,11 @@ return array(
             'orm_default' => array(
                 'object_manager' => 'Doctrine\ORM\EntityManager',
                 'identity_class' => 'User\Entity\Users',
-                'identity_property' => 'email',
-                'credential_property' => 'password',
+                'identity_property' => 'u_email',
+                'credential_property' => 'u_password',
                 'credential_callable' => function(Entity\Users $user, $passwordGiven) {
                     $bcrypt = new Bcrypt();
-                    $result = $bcrypt->verify($passwordGiven, $user->getPassword());
+                    $result = $bcrypt->verify($passwordGiven, $user->getUPassword());
                     return $result;
                 },
             ),
@@ -69,6 +69,19 @@ return array(
                             'defaults' => array(
                                 'controller' => 'User\Controller\User',
                                 'action' => 'login',
+                            ),
+                        ),
+                    ),
+                    'edit' => array(
+                        'type' => 'segment',
+                        'options' => array(
+                            'route' => '/edit[/:id]',
+                            'constraints' => array(
+                                'id' => '[0-9]+'
+                            ),
+                            'defaults' => array(
+                                'controller' => 'User\Controller\User',
+                                'action' => 'edit',
                             ),
                         ),
                     ),

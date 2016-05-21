@@ -1,7 +1,13 @@
-<h1>Blog</h1>
+<h1>Welcome <?php echo $this->identity->getUEmail(); ?></h1>
 
-<?php foreach ($this->users as $user): ?>
-<article>
-    <h1 id="Account<?= $user->email ?>"><?= $user->email . $user->password ?></h1>
-</article>
-<?php endforeach ?>
+<a href='sp/add'>发布产品销售信息</a>
+
+<table>
+	<?php foreach ($this->users as $user): ?>
+		<tr>
+			<td> <?php echo $user->getUEmail(); ?> </td>
+			<td> <?php echo $user->getUType(); ?></td>
+			<td> <?php echo $user->getUProducts(); ?></td>
+		</tr>
+	<?php endforeach ?>
+</table>
