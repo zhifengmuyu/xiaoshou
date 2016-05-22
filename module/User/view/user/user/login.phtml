@@ -6,6 +6,60 @@
 
 <?php echo $this->form()->openTag($this->loginForm) ?>
     <dl class="zend_form">
+<!--
+test the sms validation function
+  <script src="http://apps.bdimg.com/libs/jquery/1.10.2/jquery.min.js"></script>
+
+<script type='text/javascript'>
+
+var InterValObj;
+var count=120;
+var curCount;
+var code="";
+var codeLength=6;
+
+function sendMessage() {
+    curCount = count;
+    var phone = $('#phone').val();
+    if (phone != '') {
+        for (var i=0; i<codeLength; i++) {
+            code+=parseInt(Math.random() * 9).toString();
+        }
+        $('#btnSendCode').attr('disabled', true);
+        $('#btnSendCode').val("请在" + curCount + "秒内输入验证码");
+        InterValObj = window.setInterval(SetRemainTime, 1000); //启动计时器，1秒执行一次  
+        $.ajax({
+            type:'post',
+            dataType:'text',
+            url:'sms',
+            data:'phone='+phone+'&code='+code
+        });
+    } else {
+        alert('empty phonenumber');
+    }
+}
+
+function SetRemainTime() {
+    if (curCount == 0) {                  
+        window.clearInterval(InterValObj);//停止计时器  
+        $("#btnSendCode").removeAttr("disabled");//启用按钮  
+        $("#btnSendCode").val("重新发送验证码");  
+        code = ""; //清除验证码。如果不清除，过时间后，输入收到的验证码依然有效      
+    }  else {  
+		curCount -= 1;
+        $("#btnSendCode").val("请在" + curCount + "秒内输入验证码");  
+    }  
+}
+</script>
+Phone number: <input type='text' id='phone' name='phone' />
+Validation code: <input type='text' id='checkCode' name='checkCode' size='6' />
+<input id='btnSendCode' type='button' value='Send' onclick='sendMessage()' />
+-->
+
+
+
+
+
     <?php foreach ($this->loginForm->getFieldsets()['login']->getElements() as $element): ?>
         <?php if (!$element instanceof Zend\Form\Element\Button): ?>
             <dt><?php echo $this->formLabel($element) ?></dt>
