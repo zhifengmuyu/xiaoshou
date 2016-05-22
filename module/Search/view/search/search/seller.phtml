@@ -1,0 +1,10 @@
+<h1>all sellers</h1>
+
+<?php foreach ($this->allSellers as $userEntity): ?>
+	<table>
+		<tr>
+			<td><?php echo $userEntity->getUEmail() ?></td>
+			<td><?php echo $userEntity->getUType() ?></td>
+		</tr>
+	</table>
+<?php endforeach ?>

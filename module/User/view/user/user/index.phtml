@@ -2,6 +2,16 @@
 
 <a href='sp/add'>发布产品销售信息</a>
 
+<form action='search/buyer' method='post'>
+	<input type='text' name='name' />
+	<input type='submit' value='Search buyer' />
+</form>
+
+<form action='search/seller' method='post'>
+	<input type='text' name='name' />
+	<input type='submit' value='Search seller' />
+</form>
+
 <table>
 	<?php foreach ($this->users as $user): ?>
 		<tr>
