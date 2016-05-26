@@ -1,8 +1,8 @@
 create table users(
     u_id serial not null primary key,
-    u_email varchar not null, --used as login id.
+    u_email varchar, --used as login id.
     u_password varchar,
-    u_type varchar not null, --seller or buyer
+    u_type varchar, --seller or buyer
     u_channels varchar, --I know which company has cheapest computer, etc...
     u_products varchar, --I have a lot of computer to sell.
     u_nickname varchar, -- show in website.

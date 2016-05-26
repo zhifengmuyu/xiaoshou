@@ -106,9 +106,12 @@ return array(
                         ),
                     ),
                     'register' => array(
-                        'type' => 'literal',
+                        'type' => 'segment',
                         'options' => array(
-                            'route' => '/register',
+                            'route' => '/register/:type',
+                            'constraints' => array(
+                                'type' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                            ),
                             'defaults' => array(
                                 'controller' => 'User\Controller\User',
                                 'action' => 'register',

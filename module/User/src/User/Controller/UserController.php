@@ -4,7 +4,7 @@ namespace User\Controller;
 use Zend\Mvc\Controller\AbstractActionController;
 use User\Service\UserServiceInterface;
 use zend\View\Model\ViewModel;
-use User\Form\RegisterForm;
+use User\Form\PhoneRegisterForm;
 use User\Form\LoginForm;
 use Zend\Authentication\Adapter\DbTable as AuthAdapter;
 use User\Entity\Users;
@@ -89,19 +89,21 @@ class UserController extends AbstractActionController
         $this->redirect()->toRoute('user/login');
     }
 
-    public function authenticate($login, $password) 
+    public function authenticate($identities, $password) 
     {
         $authService = $this->getServiceLocator()->get('Zend\Authentication\AuthenticationService');
         $adapter = $authService->getAdapter();
 
-        $adapter->setIdentity($login);
-        $adapter->setCredential($password);
-        $authResult = $authService->authenticate();
-
-        if ($authResult->isValid()) {
-            return $authService;
+        foreach ($identities as $login) {
+            $adapter->setIdentity($login);
+            $adapter->setCredential($password);
+            $authResult = $authService->authenticate();
+            
+            if ($authResult->isValid()) {
+                return $authService;
+            }
         }
-
+        
         return false;
     }
 
@@ -160,7 +162,16 @@ class UserController extends AbstractActionController
         }
         
         $objectManager = $this->getServiceLocator()->get('Doctrine\ORM\EntityManager');
-        $registerForm = new RegisterForm($objectManager);
+
+        $type = $this->params()->fromRoute('type');
+        if ($type == 'phone') {
+            $registerForm = new PhoneRegisterForm($objectManager);
+        } else {
+
+        }
+
+
+        //$registerForm = new RegisterForm($objectManager);
         $userEntity = new Users();
         $registerForm->bind($userEntity);
 
@@ -178,16 +189,23 @@ class UserController extends AbstractActionController
                 $objectManager->persist($userEntity);
                 $objectManager->flush();
 
-                $authService = $this->authenticate($userEntity->getUEmail(), $originPassword);
+                $identities = array(
+                    'email' => $userEntity->getUEmail(),
+                    'phone' => $userEntity->getUMobilePhone(),
+                );
+                $authService = $this->authenticate($identities, $originPassword);
                 if ($authService->getIdentity()) {
                     return $this->redirect()->toRoute('user');               
                 }
+            } else {
+
             }
         }
         $registerForm->prepare();
         
         $view = new ViewModel(array(
             'registerForm' => $registerForm, 
+            'type' => $type,
         ));
 
         return $view;

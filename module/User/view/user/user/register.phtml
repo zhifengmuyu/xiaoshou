@@ -5,7 +5,7 @@
 ?>
 <?php echo $this->form()->openTag($this->registerForm) ?>
     <dl class="zend_form">
-    <?php foreach ($this->registerForm->getFieldsets()['register']->getElements() as $element): ?>
+    <?php foreach ($this->registerForm->getFieldsets()[$type]->getElements() as $element): ?>
         <?php if (!$element instanceof Zend\Form\Element\Button): ?>
             <?php if (!$element instanceof Zend\Form\Element\Hidden): ?>
                 <dt><?php echo $this->formLabel($element) ?></dt>
