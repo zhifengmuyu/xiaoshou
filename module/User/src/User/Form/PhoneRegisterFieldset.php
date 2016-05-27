@@ -9,8 +9,11 @@ use Zend\InputFilter\InputFilterProviderInterface;
  
 class PhoneRegisterFieldset extends Fieldset implements InputFilterProviderInterface
 {
+    protected $objectManager;
+
     public function __construct(ObjectManager $objectManager)
     {
+        $this->objectManager = $objectManager;
         parent::__construct('phone');
  
         $this->setHydrator(new DoctrineHydrator($objectManager))
@@ -95,6 +98,16 @@ class PhoneRegisterFieldset extends Fieldset implements InputFilterProviderInter
                         'name' => 'StringLength',
                         'options' => array(
                             'min' => 11,
+                        ),
+                    ),
+                    array(
+                        'name' => 'DoctrineModule\Validator\NoObjectExists',
+                        'options' => array(
+                            'object_repository' => $this->objectManager->getRepository('User\Entity\Users'),
+                            'fields' => 'u_mobile_phone',
+                            'messages' => array(
+                                'DoctrineModule\Validator\NoObjectExists'::ERROR_OBJECT_FOUND => "Phone number '%value%' already exists",
+                            ),
                         ),
                     ),
                 ),

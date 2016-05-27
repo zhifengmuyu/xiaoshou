@@ -7,11 +7,14 @@ use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
 use Zend\Form\Fieldset;
 use Zend\InputFilter\InputFilterProviderInterface;
  
-class RegisterFormFieldset extends Fieldset implements InputFilterProviderInterface
+class EmailRegisterFieldset extends Fieldset implements InputFilterProviderInterface
 {
+    protected $objectManager;
+
     public function __construct(ObjectManager $objectManager)
     {
-        parent::__construct('register');
+        $this->objectManager = $objectManager;
+        parent::__construct('email');
  
         $this->setHydrator(new DoctrineHydrator($objectManager))
              ->setObject(new Users());
@@ -25,17 +28,14 @@ class RegisterFormFieldset extends Fieldset implements InputFilterProviderInterf
                 'label' => ' ',
             ),
         ));
- 
-        $this->add(array(
-            'name' => 'u_email',
-            'type' => 'text',
-            'options' => array(
-                'label' => 'Email: ',
+
+         $this->add(array(
+            'type'       => 'text',
+            'name'       => 'u_email',
+            'options'  => array(
+                'label' => 'Email address: ',
             ),
-            'attributes' => array(
-                'type' => 'text',
-            ),
-        ));
+        ));        
  
         $this->add(array(
             'name' => 'u_password',
@@ -43,9 +43,6 @@ class RegisterFormFieldset extends Fieldset implements InputFilterProviderInterf
             'options' => array(
                 'label' => 'Password: ',
             ),
-            'attributes' => array(
-                'type' => 'password',
-            )
         ));
 
         $this->add(array(
@@ -55,77 +52,6 @@ class RegisterFormFieldset extends Fieldset implements InputFilterProviderInterf
                 'label' => 'Verify password: ',
             ),
         ));
-
-        $this->add(array(
-            'type'       => 'select',
-            'name'       => 'u_type',
-            'options'  => array(
-                'label' => 'Account type: ',
-                'empty_option' => 'Choose account type',
-                'value_options' => array(
-                    'seller' => 'Seller',
-                    'buyer' => 'Buyer',
-                ),
-            ),
-        ));        
-
-        $this->add(array(
-            'type'       => 'select',
-            'name'       => 'u_channels',
-            'options'  => array(
-                'label' => 'Select your channels: ',
-                'empty_option' => 'Select Channels',
-                'value_options' => array(
-                    'software' => 'Software',
-                    'datacenter' => 'Datacenter',
-                ),
-            ),
-        ));  
-
-        $this->add(array(
-            'type'       => 'select',
-            'name'       => 'u_products',
-            'options'  => array(
-                'label' => 'Select your products: ',
-                'empty_option' => 'Select Products',
-                'value_options' => array(
-                    'apple' => 'Apple',
-                    'orange' => 'Orange',
-                ),
-            ),
-        )); 
-
-        $this->add(array(
-            'type'       => 'text',
-            'name'       => 'u_nickname',
-            'options'  => array(
-                'label' => 'Nickname: ',
-            ),
-        )); 
-
-        $this->add(array(
-            'type'       => 'text',
-            'name'       => 'u_mobile_phone',
-            'options'  => array(
-                'label' => 'Mobile phone: ',
-            ),
-        ));        
-
-        $this->add(array(
-            'type'       => 'text',
-            'name'       => 'u_fixed_phone',
-            'options'  => array(
-                'label' => 'Fixed phone: ',
-            ),
-        )); 
-
-        $this->add(array(
-            'type'       => 'text',
-            'name'       => 'u_wechat',
-            'options'  => array(
-                'label' => 'Wechat: ',
-            ),
-        )); 
 
          $this->add(array(
             'type'       => 'hidden',
@@ -169,18 +95,21 @@ class RegisterFormFieldset extends Fieldset implements InputFilterProviderInterf
                 'required' => true,
                 'validators' => array(
                     array(
-                        'name'    => 'StringLength',
-                        'options' => array(
-                                'encoding' => 'UTF-8',
-                                'min' => 2,
-                                'max' => 100,
-                             ),
-                    ),
-                    array(
                         'name' => 'EmailAddress',
                     ),
+                    array(
+                        'name' => 'DoctrineModule\Validator\NoObjectExists',
+                        'options' => array(
+                            'object_repository' => $this->objectManager->getRepository('User\Entity\Users'),
+                            'fields' => 'u_email',
+                            'messages' => array(
+                                'DoctrineModule\Validator\NoObjectExists'::ERROR_OBJECT_FOUND => "Email address '%value%' already exists",
+                            ),
+                        ),
+                    ),
                 ),
-            ),
+            ),  
+
             'u_password' => array(
                 'required' => true,
                 'validators' => array(
@@ -192,6 +121,7 @@ class RegisterFormFieldset extends Fieldset implements InputFilterProviderInterf
                     ),
                 ),
             ),
+
             'passwordVerify' => array(
                 'required' => true,
                 'validators' => array(
@@ -209,35 +139,6 @@ class RegisterFormFieldset extends Fieldset implements InputFilterProviderInterf
                     ),
                 ),
             ),
-
-            'u_type' => array(
-                'required' => true,
-            ),
-
-            'u_channels' => array(
-                'required' => false,
-            ),
-
-            'u_products' => array(
-                'required' => false,
-            ),
-
-            'u_nickname' => array(
-                'required' => false,
-            ),
-
-            'u_mobile_phone' => array(
-                'required' => false,
-            ),  
-
-            'u_fixed_phone' => array(
-                'required' => false,
-            ),  
-
-            'u_wechat' => array(
-                'required' => false,
-            ),  
-
 
             'u_creation' => array(
                 'required' => false,

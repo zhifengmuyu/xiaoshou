@@ -5,6 +5,7 @@ use Zend\Mvc\Controller\AbstractActionController;
 use User\Service\UserServiceInterface;
 use zend\View\Model\ViewModel;
 use User\Form\PhoneRegisterForm;
+use User\Form\EmailRegisterForm;
 use User\Form\LoginForm;
 use Zend\Authentication\Adapter\DbTable as AuthAdapter;
 use User\Entity\Users;
@@ -89,21 +90,19 @@ class UserController extends AbstractActionController
         $this->redirect()->toRoute('user/login');
     }
 
-    public function authenticate($identities, $password) 
+    public function authenticate($login, $password) 
     {
         $authService = $this->getServiceLocator()->get('Zend\Authentication\AuthenticationService');
         $adapter = $authService->getAdapter();
 
-        foreach ($identities as $login) {
-            $adapter->setIdentity($login);
-            $adapter->setCredential($password);
-            $authResult = $authService->authenticate();
+        $adapter->setIdentity($login);
+        $adapter->setCredential($password);
+        $authResult = $authService->authenticate();
             
-            if ($authResult->isValid()) {
-                return $authService;
-            }
+        if ($authResult->isValid()) {
+            return $authService;
         }
-        
+
         return false;
     }
 
@@ -154,6 +153,15 @@ class UserController extends AbstractActionController
         return $view;
     }
 
+    public function userExists($type, $id) 
+    {
+        $objectManager = $this->getServiceLocator()->get('Doctrine\ORM\EntityManager');
+        $userEntity = $objectManager->getRepository('User\Entity\Users')->findBy(array($type, $id));
+        if ($userEntity) return true;
+
+        return false;
+    }
+
     public function registerAction() 
     {
         $authenticationService = $this->getServiceLocator()->get('Zend\Authentication\AuthenticationService');
@@ -162,12 +170,11 @@ class UserController extends AbstractActionController
         }
         
         $objectManager = $this->getServiceLocator()->get('Doctrine\ORM\EntityManager');
-
         $type = $this->params()->fromRoute('type');
         if ($type == 'phone') {
-            $registerForm = new PhoneRegisterForm($objectManager);
+            $registerForm = new PhoneRegisterForm($objectManager);                
         } else {
-
+            $registerForm = new EmailRegisterForm($objectManager);
         }
 
 
@@ -189,11 +196,7 @@ class UserController extends AbstractActionController
                 $objectManager->persist($userEntity);
                 $objectManager->flush();
 
-                $identities = array(
-                    'email' => $userEntity->getUEmail(),
-                    'phone' => $userEntity->getUMobilePhone(),
-                );
-                $authService = $this->authenticate($identities, $originPassword);
+                $authService = $this->authenticate($userEntity->getUEmail(), $originPassword);
                 if ($authService->getIdentity()) {
                     return $this->redirect()->toRoute('user');               
                 }

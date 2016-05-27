@@ -9,7 +9,7 @@ return array(
             'orm_default' => array(
                 'object_manager' => 'Doctrine\ORM\EntityManager',
                 'identity_class' => 'User\Entity\Users',
-                'identity_property' => 'u_email',
+                'identity_property' => 'u_mobile_phone,u_email',
                 'credential_property' => 'u_password',
                 'credential_callable' => function(Entity\Users $user, $passwordGiven) {
                     $bcrypt = new Bcrypt();
@@ -31,12 +31,20 @@ return array(
             ),
         ),
     ),
+
+    'doctrine_factories' => array(
+        'authenticationadapter' => 'User\Auth\AdapterFactory',
+    ),
+
     'service_manager' => array(
         'factories' => array(
             'Zend\Db\Adapter\Adapter' => 'Zend\Db\Adapter\AdapterServiceFactory',
             'User\Mapper\UserMapperInterface' => 'User\Factory\ZendDbSqlMapperFactory',
             'User\Service\UserServiceInterface' => 'User\Factory\UserServiceFactory',
-        )
+            'Zend\Authentication\AuthenticationService' => function($serviceManager) {
+                return $serviceManager->get('doctrine.authenticationservice.orm_default');
+            },
+        ),
     ),
     'controllers' => array(
          'factories' => array(
