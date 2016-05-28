@@ -14,9 +14,9 @@ class LoginFormFieldset extends Fieldset implements InputFilterProviderInterface
         parent::__construct('login');
  
         $this->add(array(
-            'name' => 'email',
+            'name' => 'login_id',
             'options' => array(
-                'label' => 'Email: ',
+                'label' => 'ID: ',
             ),
             'attributes' => array(
                 'type' => 'text'
@@ -55,7 +55,7 @@ class LoginFormFieldset extends Fieldset implements InputFilterProviderInterface
     public function getInputFilterSpecification()
     {
         return array(
-            'email' => array(
+            'login_id' => array(
                 'required' => true,
             ),
             'password' => array(

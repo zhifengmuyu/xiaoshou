@@ -7,6 +7,7 @@ use zend\View\Model\ViewModel;
 use User\Form\PhoneRegisterForm;
 use User\Form\EmailRegisterForm;
 use User\Form\LoginForm;
+use User\Form\UserProfileForm;
 use Zend\Authentication\Adapter\DbTable as AuthAdapter;
 use User\Entity\Users;
 use Zend\Crypt\Password\Bcrypt;
@@ -59,7 +60,7 @@ class UserController extends AbstractActionController
                 $authService = $this->getServiceLocator()->get('Zend\Authentication\AuthenticationService');
                 $adapter = $authService->getAdapter();
                 $postData = $this->getRequest()->getPost('login');
-                $adapter->setIdentity($postData['email']);
+                $adapter->setIdentity($postData['login_id']);
                 $adapter->setCredential($postData['password']);
                 $authResult = $authService->authenticate();
 
@@ -114,6 +115,31 @@ class UserController extends AbstractActionController
             return $this->redirect()->toRoute('user/login');
         }
 
+        $messages = array();
+        $id = $identity->getId();
+        $objectManager = $this->getServiceLocator()->get('Doctrine\ORM\EntityManager');
+        $userEntity = $objectManager->getRepository('User\Entity\Users')->find($id);
+        $userProfileForm = new UserProfileForm($objectManager);
+        $userProfileForm->bind($userEntity);
+
+        if ($this->request->isPost()) {
+            $userProfileForm->setData($this->request->getPost());
+            if ($userProfileForm->isValid()) {
+                $objectManager->persist($userEntity);
+                $objectManager->flush();
+                $messages[] = 'User profile updated';
+            }
+        }
+
+        $userProfileForm->prepare();
+        $view = new ViewModel(array(
+            'userProfileForm' => $userProfileForm,
+            'loggedUser' => $identity,
+            'messages' => $messages,
+        ));
+
+        return $view;
+        /*
         $id = $identity->getId();
         $objectManager = $this->getServiceLocator()->get('Doctrine\ORM\EntityManager');
         $userEntity = $objectManager->getRepository('User\Entity\Users')->find($id);
@@ -151,6 +177,7 @@ class UserController extends AbstractActionController
         ));
 
         return $view;
+        */
     }
 
     public function userExists($type, $id) 
@@ -170,15 +197,15 @@ class UserController extends AbstractActionController
         }
         
         $objectManager = $this->getServiceLocator()->get('Doctrine\ORM\EntityManager');
-        $type = $this->params()->fromRoute('type');
-        if ($type == 'phone') {
+        $registerType = $this->params()->fromRoute('register_type');
+        $accountType = $this->params()->fromRoute('account_type');
+        if ($accountType != 'company') $accountType = 'individual';
+        if ($registerType == 'phone') {
             $registerForm = new PhoneRegisterForm($objectManager);                
         } else {
             $registerForm = new EmailRegisterForm($objectManager);
         }
 
-
-        //$registerForm = new RegisterForm($objectManager);
         $userEntity = new Users();
         $registerForm->bind($userEntity);
 
@@ -193,10 +220,15 @@ class UserController extends AbstractActionController
                 $userEntity->setUPassword($bcrypt->create($originPassword));
                 $userEntity->setUDeleted('f');
                 $userEntity->setUCreation(new DateTime());
+                $userEntity->setUType($accountType);
                 $objectManager->persist($userEntity);
                 $objectManager->flush();
 
-                $authService = $this->authenticate($userEntity->getUEmail(), $originPassword);
+                if ($registerType == 'phone') {
+                    $authService = $this->authenticate($userEntity->getUMobilePhone(), $originPassword);
+                } else {                    
+                    $authService = $this->authenticate($userEntity->getUEmail(), $originPassword);
+                }
                 if ($authService->getIdentity()) {
                     return $this->redirect()->toRoute('user');               
                 }
@@ -208,7 +240,7 @@ class UserController extends AbstractActionController
         
         $view = new ViewModel(array(
             'registerForm' => $registerForm, 
-            'type' => $type,
+            'type' => $registerType,
         ));
 
         return $view;

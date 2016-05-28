@@ -1,12 +1,14 @@
 <h1><?php echo $this->translate('Edit user'); ?></h1>
 
-<?php
-//\Zend\Debug\Debug::dump($this->userForm);
-?>
-<?php echo $this->form()->openTag($this->userForm) ?>
+<?php if ($this->messages): ?>
+    <?php foreach ($this->messages as $message): ?>
+        <h2><?php echo $message ?></h2>
+    <?php endforeach ?>
+<?php endif ?>
+<?php echo $this->form()->openTag($this->userProfileForm) ?>
     <dl class="zend_form">
-    <?php foreach ($this->userForm->getFieldsets()['register']->getElements() as $element): ?>
-        <?php if ($element->getName() == 'register[u_id]'): ?>
+    <?php foreach ($this->userProfileForm->getFieldsets()['profile']->getElements() as $element): ?>
+        <?php if ($element->getName() == 'profile[u_id]'): ?>
             <?php $element->setValue($loggedUser->getId()) ?>
         <?php endif ?>
         <?php if (!$element instanceof Zend\Form\Element\Button): ?>

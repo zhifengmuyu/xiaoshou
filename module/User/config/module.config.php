@@ -116,9 +116,10 @@ return array(
                     'register' => array(
                         'type' => 'segment',
                         'options' => array(
-                            'route' => '/register/:type',
+                            'route' => '/register/:account_type/:register_type',
                             'constraints' => array(
-                                'type' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                                'account_type' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                                'register_type' => '[a-zA-Z][a-zA-Z0-9_-]*',
                             ),
                             'defaults' => array(
                                 'controller' => 'User\Controller\User',

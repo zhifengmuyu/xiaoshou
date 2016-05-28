@@ -7,11 +7,14 @@ use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
 use Zend\Form\Fieldset;
 use Zend\InputFilter\InputFilterProviderInterface;
  
-class RegisterFormFieldset extends Fieldset implements InputFilterProviderInterface
+class userProfileFormFieldset extends Fieldset implements InputFilterProviderInterface
 {
+    protected $objectManager;
+
     public function __construct(ObjectManager $objectManager)
     {
-        parent::__construct('register');
+        $this->objectManager = $objectManager;
+        parent::__construct('profile');
  
         $this->setHydrator(new DoctrineHydrator($objectManager))
              ->setObject(new Users());
@@ -37,64 +40,6 @@ class RegisterFormFieldset extends Fieldset implements InputFilterProviderInterf
             ),
         ));
  
-        $this->add(array(
-            'name' => 'u_password',
-            'type' => 'password',
-            'options' => array(
-                'label' => 'Password: ',
-            ),
-            'attributes' => array(
-                'type' => 'password',
-            )
-        ));
-
-        $this->add(array(
-            'type'       => 'password',
-            'name'       => 'passwordVerify',
-            'options'    => array(
-                'label' => 'Verify password: ',
-            ),
-        ));
-
-        $this->add(array(
-            'type'       => 'select',
-            'name'       => 'u_type',
-            'options'  => array(
-                'label' => 'Account type: ',
-                'empty_option' => 'Choose account type',
-                'value_options' => array(
-                    'seller' => 'Seller',
-                    'buyer' => 'Buyer',
-                ),
-            ),
-        ));        
-
-        $this->add(array(
-            'type'       => 'select',
-            'name'       => 'u_channels',
-            'options'  => array(
-                'label' => 'Select your channels: ',
-                'empty_option' => 'Select Channels',
-                'value_options' => array(
-                    'software' => 'Software',
-                    'datacenter' => 'Datacenter',
-                ),
-            ),
-        ));  
-
-        $this->add(array(
-            'type'       => 'select',
-            'name'       => 'u_products',
-            'options'  => array(
-                'label' => 'Select your products: ',
-                'empty_option' => 'Select Products',
-                'value_options' => array(
-                    'apple' => 'Apple',
-                    'orange' => 'Orange',
-                ),
-            ),
-        )); 
-
         $this->add(array(
             'type'       => 'text',
             'name'       => 'u_nickname',
@@ -126,22 +71,6 @@ class RegisterFormFieldset extends Fieldset implements InputFilterProviderInterf
                 'label' => 'Wechat: ',
             ),
         )); 
-
-         $this->add(array(
-            'type'       => 'hidden',
-            'name'       => 'u_creation',
-            'options'  => array(
-                'label' => 'Creation: ',
-            ),
-        ));        
-
-         $this->add(array(
-            'type'       => 'hidden',
-            'name'       => 'u_deleted',
-            'options'  => array(
-                'label' => 'Deleted: ',
-            ),
-        ));   
 
         $this->add(array(
             'name' => 'submit',
@@ -179,47 +108,19 @@ class RegisterFormFieldset extends Fieldset implements InputFilterProviderInterf
                     array(
                         'name' => 'EmailAddress',
                     ),
-                ),
-            ),
-            'u_password' => array(
-                'required' => true,
-                'validators' => array(
                     array(
-                        'name'    => 'StringLength',
+                        'name' => 'User\Form\NoOtherEntityExists',
                         'options' => array(
-                            'min' => 6,
+                            'object_repository' => $this->objectManager->getRepository('User\Entity\Users'),
+                            'fields' => 'u_email',
+                            'id' => $this->getObject()->getId(),
+                            'id_getter' => 'getId',
+                            'messages' => array(
+                                'User\Form\NoOtherEntityExists'::ERROR_OBJECT_FOUND => "Email address '%value%' already exists",
+                            ),
                         ),
                     ),
                 ),
-            ),
-            'passwordVerify' => array(
-                'required' => true,
-                'validators' => array(
-                    array(
-                        'name'    => 'StringLength',
-                        'options' => array(
-                            'min' => 6,
-                        ),
-                    ),
-                    array(
-                        'name'    => 'Identical',
-                        'options' => array(
-                            'token' => 'u_password',
-                        ),
-                    ),
-                ),
-            ),
-
-            'u_type' => array(
-                'required' => true,
-            ),
-
-            'u_channels' => array(
-                'required' => false,
-            ),
-
-            'u_products' => array(
-                'required' => false,
             ),
 
             'u_nickname' => array(
@@ -228,6 +129,28 @@ class RegisterFormFieldset extends Fieldset implements InputFilterProviderInterf
 
             'u_mobile_phone' => array(
                 'required' => false,
+                'validators' => array(
+                    array(
+                        'name'    => 'StringLength',
+                        'options' => array(
+                                'encoding' => 'UTF-8',
+                                'min' => 11,
+                             ),
+                    ),
+                    array(
+                        'name' => 'User\Form\NoOtherEntityExists',
+                        'options' => array(
+                            'object_repository' => $this->objectManager->getRepository('User\Entity\Users'),
+                            'fields' => 'u_mobile_phone',
+                            'id' => $this->getObject()->getId(),
+                            'id_getter' => 'getId',
+                            'messages' => array(
+                                'User\Form\NoOtherEntityExists'::ERROR_OBJECT_FOUND => "Phone number '%value%' already exists",
+                            ),
+                        ),
+                    ),
+                ),
+   
             ),  
 
             'u_fixed_phone' => array(
@@ -235,15 +158,6 @@ class RegisterFormFieldset extends Fieldset implements InputFilterProviderInterf
             ),  
 
             'u_wechat' => array(
-                'required' => false,
-            ),  
-
-
-            'u_creation' => array(
-                'required' => false,
-            ),  
-
-            'u_deleted' => array(
                 'required' => false,
             ),  
         );

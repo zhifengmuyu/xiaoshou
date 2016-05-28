@@ -6,18 +6,18 @@ use Zend\Form\Form;
 use Doctrine\Common\Persistence\ObjectManager;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
 
-class RegisterForm extends Form
+class UserProfileForm extends Form
 {
     public function __construct(ObjectManager $objectManager)
     {
-        parent::__construct('register');
+        parent::__construct('profile');
 
         $this->setHydrator(new DoctrineHydrator($objectManager));
-        $registerFormFieldset = new RegisterFormFieldset($objectManager);
-        $registerFormFieldset->setUseAsBaseFieldset(true);
-        $registerFormFieldset->setOptions(array(
+        $userProfileFormFieldset = new UserProfileFormFieldset($objectManager);
+        $userProfileFormFieldset->setUseAsBaseFieldset(true);
+        $userProfileFormFieldset->setOptions(array(
             'label' => ' ',
         ));
-        $this->add($registerFormFieldset);
+        $this->add($userProfileFormFieldset);
     }
 }
