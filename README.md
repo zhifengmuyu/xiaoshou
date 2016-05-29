@@ -117,11 +117,26 @@ it should look something like below:
 
 Restart the nginx, now you should be ready to go!
 
-individual user register with phone: /user/register/individual/phone
-individual user register with email: /user/register/individual/email
-company user register with phone: /user/register/company/phone
-company user reigster with email: /user/register/company/email
-user login: /user/login
-user logout: /user/logout
-edit user profile /user/edit/id
+### URLS
+
+1. User
+    individual user register with phone: /user/register/individual/phone
+    individual user register with email: /user/register/individual/email
+    company user register with phone: /user/register/company/phone
+    company user reigster with email: /user/register/company/email
+    user login: /user/login
+    user logout: /user/logout
+    edit user profile /user/edit/id
+2. Product
+    add product: /product/add
+    edit product: /product/edit/id
+    delete product: product/delete/id
+3. Channel
+    add channel: /channel/add
+    edit channel: /channle/edit/id
+    delete channel: /channel/delete/id
+4. Search
+    search product: /search/product + POST['name']
+    search channel: /search/channel + POST['name']
+
 
