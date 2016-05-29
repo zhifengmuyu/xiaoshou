@@ -116,3 +116,12 @@ it should look something like below:
     }
 
 Restart the nginx, now you should be ready to go!
+
+individual user register with phone: /user/register/individual/phone
+individual user register with email: /user/register/individual/email
+company user register with phone: /user/register/company/phone
+company user reigster with email: /user/register/company/email
+user login: /user/login
+user logout: /user/logout
+edit user profile /user/edit/id
+
