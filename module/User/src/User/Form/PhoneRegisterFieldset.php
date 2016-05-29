@@ -1,7 +1,7 @@
 <?php
 namespace User\Form;
  
-use User\Entity\Users;
+use User\Entity\User;
 use Doctrine\Common\Persistence\ObjectManager;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
 use Zend\Form\Fieldset;
@@ -17,7 +17,7 @@ class PhoneRegisterFieldset extends Fieldset implements InputFilterProviderInter
         parent::__construct('phone');
  
         $this->setHydrator(new DoctrineHydrator($objectManager))
-             ->setObject(new Users());
+             ->setObject(new User());
  
         $this->add(array(
             'name' => 'u_id',
@@ -103,7 +103,7 @@ class PhoneRegisterFieldset extends Fieldset implements InputFilterProviderInter
                     array(
                         'name' => 'DoctrineModule\Validator\NoObjectExists',
                         'options' => array(
-                            'object_repository' => $this->objectManager->getRepository('User\Entity\Users'),
+                            'object_repository' => $this->objectManager->getRepository('User\Entity\User'),
                             'fields' => 'u_mobile_phone',
                             'messages' => array(
                                 'DoctrineModule\Validator\NoObjectExists'::ERROR_OBJECT_FOUND => "Phone number '%value%' already exists",

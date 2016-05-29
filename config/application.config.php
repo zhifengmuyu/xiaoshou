@@ -11,6 +11,8 @@ return array(
         'DoctrineModule',
         'DoctrineORMModule',
         'User',
+        //'CompanyUser',
+        //'IndividualUser',
         'Sp',
         'Search',
     ),

@@ -8,8 +8,12 @@ use User\Form\PhoneRegisterForm;
 use User\Form\EmailRegisterForm;
 use User\Form\LoginForm;
 use User\Form\UserProfileForm;
+use User\Form\IndividualUserForm;
+use User\Form\CompanyUserForm;
 use Zend\Authentication\Adapter\DbTable as AuthAdapter;
-use User\Entity\Users;
+use User\Entity\User;
+use User\Entity\CompanyUser;
+use User\Entity\IndividualUser;
 use Zend\Crypt\Password\Bcrypt;
 use Zend\Stdlib\DateTime;
 
@@ -40,7 +44,7 @@ class UserController extends AbstractActionController
         }
 
         return new ViewModel(array(
-            'users' => $this->getEntityManager()->getRepository('User\Entity\Users')->findAll(),
+            'users' => $this->getEntityManager()->getRepository('User\Entity\User')->findAll(),
             'identity' => $identity,
         ));
     }
@@ -116,16 +120,57 @@ class UserController extends AbstractActionController
         }
 
         $messages = array();
-        $id = $identity->getId();
+        $id = $this->params()->fromRoute('id');
         $objectManager = $this->getServiceLocator()->get('Doctrine\ORM\EntityManager');
-        $userEntity = $objectManager->getRepository('User\Entity\Users')->find($id);
-        $userProfileForm = new UserProfileForm($objectManager);
-        $userProfileForm->bind($userEntity);
+        $userEntity = $objectManager->getRepository('User\Entity\User')->find($id);
+
+        if ($userEntity->getUType() == 'company') {
+            $userProfileEntity = $objectManager->getRepository('User\Entity\CompanyUser')->findOneBy(array('cu_xref_u_id' => $id));
+            if (!$userProfileEntity) {
+                $userProfileEntity = new CompanyUser();
+            }            
+
+            $userProfileForm = new CompanyUserForm($objectManager);
+            $userProfileForm->bind($userProfileEntity);
+            $userProfileForm->setData(array(
+                'profile' => array(
+                    'u_email' => $userEntity->getUEmail(),
+                    'u_mobile_phone' => $userEntity->getUMobilePhone(),
+                    'cu_xref_u_id' => $userEntity->getId(),
+                ),
+            ));
+        } else {
+            $userProfileEntity = $objectManager->getRepository('User\Entity\IndividualUser')->findOneBy(array('iu_xref_u_id' => $id));
+            if (!$userProfileEntity) {
+                $userProfileEntity = new IndividualUser();
+            }
+            $userProfileForm = new IndividualUserForm($objectManager);
+            $userProfileForm->bind($userProfileEntity);
+            $userProfileForm->setData(array(
+                'profile' => array(
+                    'u_email' => $userEntity->getUEmail(),
+                    'u_mobile_phone' => $userEntity->getUMobilePhone(),
+                    'cu_xref_u_id' => $userEntity->getId(),
+                ),
+            ));
+        }
 
         if ($this->request->isPost()) {
-            $userProfileForm->setData($this->request->getPost());
+            $postData = $this->request->getPost();
+            $userProfileForm->setData($postData);
             if ($userProfileForm->isValid()) {
-                $objectManager->persist($userEntity);
+
+                if (
+                    ($postData['profile']['u_email'] and $postData['profile']['u_email'] != $userEntity->getUEmail()) 
+                    or ($postData['profile']['u_email'] and $postData['profile']['u_mobile_phone'] != $userEntity->getUMobilePhone())
+                    ) {
+                    $userEntity->setUEmail($postData['profile']['u_email']);
+                    $userEntity->setUMobilePhone($postData['profile']['u_mobile_phone']);
+                    $objectManager->persist($userEntity);
+                    $objectManager->flush();
+                }
+
+                $objectManager->persist($userProfileEntity);
                 $objectManager->flush();
                 $messages[] = 'User profile updated';
             }
@@ -139,51 +184,12 @@ class UserController extends AbstractActionController
         ));
 
         return $view;
-        /*
-        $id = $identity->getId();
-        $objectManager = $this->getServiceLocator()->get('Doctrine\ORM\EntityManager');
-        $userEntity = $objectManager->getRepository('User\Entity\Users')->find($id);
-        $userForm = new RegisterForm($objectManager);
-        $userForm->getFieldsets()['register']->remove('u_creation');
-        $userForm->getFieldsets()['register']->remove('u_deleted');
-
-        $userForm->setValidationGroup(array(
-            'register' => array('u_type', 'u_channels', 'u_products', 'u_nickname', 'u_mobile_phone', 'u_fixed_phone', 'u_wechat', 'u_creation', 'u_deleted')
-        ));
-        $userForm->getFieldsets()['register']->remove('u_email');
-        $userForm->getFieldsets()['register']->remove('u_password');
-        $userForm->getFieldsets()['register']->remove('passwordVerify');
-
-        $userForm->bind($userEntity);
-
-        if ($this->request->isPost()) {
-            $userForm->setData($this->request->getPost());
-            if ($userForm->isValid()) {
-                \Zend\Debug\Debug::dump('adfasdfasdf');
-                $objectManager->persist($userEntity);
-                $objectManager->flush();
-
-                return $this->redirect()->toRoute('user');
-            } else {
-                \Zend\Debug\Debug::dump('1111111');
-                \Zend\Debug\Debug::dump($userForm->getMessages());
-            }
-        }
-
-        $userForm->prepare();
-        $view = new ViewModel(array(
-            'userForm' => $userForm,
-            'loggedUser' => $identity,
-        ));
-
-        return $view;
-        */
     }
 
     public function userExists($type, $id) 
     {
         $objectManager = $this->getServiceLocator()->get('Doctrine\ORM\EntityManager');
-        $userEntity = $objectManager->getRepository('User\Entity\Users')->findBy(array($type, $id));
+        $userEntity = $objectManager->getRepository('User\Entity\User')->findBy(array($type, $id));
         if ($userEntity) return true;
 
         return false;
@@ -206,7 +212,7 @@ class UserController extends AbstractActionController
             $registerForm = new EmailRegisterForm($objectManager);
         }
 
-        $userEntity = new Users();
+        $userEntity = new User();
         $registerForm->bind($userEntity);
 
         if ($this->request->isPost()) {
@@ -221,6 +227,7 @@ class UserController extends AbstractActionController
                 $userEntity->setUDeleted('f');
                 $userEntity->setUCreation(new DateTime());
                 $userEntity->setUType($accountType);
+                $userEntity->setUActivated('t');
                 $objectManager->persist($userEntity);
                 $objectManager->flush();
 

@@ -8,10 +8,10 @@ return array(
         'authentication' => array(
             'orm_default' => array(
                 'object_manager' => 'Doctrine\ORM\EntityManager',
-                'identity_class' => 'User\Entity\Users',
+                'identity_class' => 'User\Entity\User',
                 'identity_property' => 'u_mobile_phone,u_email',
                 'credential_property' => 'u_password',
-                'credential_callable' => function(Entity\Users $user, $passwordGiven) {
+                'credential_callable' => function(Entity\User $user, $passwordGiven) {
                     $bcrypt = new Bcrypt();
                     $result = $bcrypt->verify($passwordGiven, $user->getUPassword());
                     return $result;

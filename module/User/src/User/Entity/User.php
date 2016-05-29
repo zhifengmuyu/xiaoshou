@@ -13,7 +13,7 @@ use Docttine\Common\Annotations\AnnotationRegistry;
 * @ORM\Table(name="users")
 * @Annotation\Name("Users")
 */
-class Users
+class User
 {
     /** 
     * @ORM\Id
@@ -40,32 +40,12 @@ class Users
     /** 
     * @ORM\Column(type="string") 
     */
-    protected $u_channels;
-
-    /** 
-    * @ORM\Column(type="string") 
-    */
-    protected $u_products;
-
-    /** 
-    * @ORM\Column(type="string") 
-    */
-    protected $u_nickname;
-
-    /** 
-    * @ORM\Column(type="string") 
-    */
     protected $u_mobile_phone;
 
     /** 
-    * @ORM\Column(type="string") 
+    * @ORM\Column(type="boolean")
     */
-    protected $u_fixed_phone;
-
-    /** 
-    * @ORM\Column(type="string") 
-    */
-    protected $u_wechat;
+    protected $u_activated;
 
     /** 
     * @ORM\Column(type="datetime",nullable=false)
@@ -117,35 +97,6 @@ class Users
         return $this->u_type;
     }
 
-    public function setUChannels($channels) 
-    {
-        $this->u_channels = $channels;
-    }
-
-    public function getUChannels() 
-    {
-        return $this->u_channels;
-    }
-
-    public function setUProducts($products) 
-    {
-        $this->u_products = $products;
-    }
-
-    public function getUProducts() 
-    {
-        return $this->u_products;
-    }
-
-    public function setUNickname($nickname) 
-    {
-        $this->u_nickname = $nickname;
-    }
-
-    public function getUNickname() 
-    {
-        return $this->u_nickname;
-    }
 
     public function setUMobilePhone($mobile) 
     {
@@ -157,24 +108,14 @@ class Users
         return $this->u_mobile_phone;
     }    
 
-    public function setUFixedPhone($fixed) 
+    public function setUActivated($activated)
     {
-        $this->u_fixed_phone = $fixed;
+        $this->u_activated = $activated;
     }
 
-    public function getUFixedPhone() 
+    public function getUActivated()
     {
-        return $this->u_fixed_phone;
-    }     
-
-    public function setUWechat($wechat) 
-    {
-        $this->u_wechat = $wechat;
-    }
-
-    public function getUWechat() 
-    {
-        return $this->u_wechat;
+        return $this->u_activated;
     }
 
     public function setUCreation($creation) 

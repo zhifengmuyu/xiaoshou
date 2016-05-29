@@ -32,7 +32,7 @@ class NoOtherEntityExists extends NoObjectExists
         $value = $this->cleanSearchValue($value);
         $match = $this->objectRepository->findOneBy($value);
 
-        if (is_object($match) && $match->{$this->id_getter}() != $this->id) {
+        if (is_object($match) && $this->id && $match->{$this->id_getter}() != $this->id) {
             if (is_array($value)) {
                 $str = '';
                 foreach ($value as $campo) {

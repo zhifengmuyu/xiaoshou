@@ -1,13 +1,13 @@
 <?php
 namespace User\Form;
  
-use User\Entity\Users;
+use User\Entity\IndividualUser;
 use Doctrine\Common\Persistence\ObjectManager;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
 use Zend\Form\Fieldset;
 use Zend\InputFilter\InputFilterProviderInterface;
  
-class userProfileFormFieldset extends Fieldset implements InputFilterProviderInterface
+class IndividualUserFormFieldset extends Fieldset implements InputFilterProviderInterface
 {
     protected $objectManager;
 
@@ -17,10 +17,10 @@ class userProfileFormFieldset extends Fieldset implements InputFilterProviderInt
         parent::__construct('profile');
  
         $this->setHydrator(new DoctrineHydrator($objectManager))
-             ->setObject(new Users());
+             ->setObject(new IndividualUser());
  
         $this->add(array(
-            'name' => 'u_id',
+            'name' => 'iu_id',
             'attributes' => array(
                 'type' => 'hidden',
             ),
@@ -30,19 +30,34 @@ class userProfileFormFieldset extends Fieldset implements InputFilterProviderInt
         ));
  
         $this->add(array(
-            'name' => 'u_email',
-            'type' => 'text',
+            'name' => 'iu_xref_u_id',
             'options' => array(
-                'label' => 'Email: ',
+                'label' => ' ',
             ),
             'attributes' => array(
-                'type' => 'text',
+                'type' => 'hidden',
             ),
         ));
- 
+
         $this->add(array(
             'type'       => 'text',
-            'name'       => 'u_nickname',
+            'name'       => 'u_email',
+            'options'  => array(
+                'label' => 'Email address: ',
+            ),
+        )); 
+
+         $this->add(array(
+            'type'       => 'text',
+            'name'       => 'u_mobile_phone',
+            'options'  => array(
+                'label' => 'Mobile phone: ',
+            ),
+        ));        
+
+        $this->add(array(
+            'type'       => 'text',
+            'name'       => 'iu_nickname',
             'options'  => array(
                 'label' => 'Nickname: ',
             ),
@@ -50,9 +65,9 @@ class userProfileFormFieldset extends Fieldset implements InputFilterProviderInt
 
         $this->add(array(
             'type'       => 'text',
-            'name'       => 'u_mobile_phone',
+            'name'       => 'iu_wechat',
             'options'  => array(
-                'label' => 'Mobile phone: ',
+                'label' => 'Wechat: ',
             ),
         ));        
 
@@ -66,9 +81,9 @@ class userProfileFormFieldset extends Fieldset implements InputFilterProviderInt
 
         $this->add(array(
             'type'       => 'text',
-            'name'       => 'u_wechat',
+            'name'       => 'iu_labels',
             'options'  => array(
-                'label' => 'Wechat: ',
+                'label' => 'Labels: ',
             ),
         )); 
 
@@ -95,7 +110,7 @@ class userProfileFormFieldset extends Fieldset implements InputFilterProviderInt
     {
         return array(
             'u_email' => array(
-                'required' => true,
+                'required' => false,
                 'validators' => array(
                     array(
                         'name'    => 'StringLength',
@@ -111,9 +126,9 @@ class userProfileFormFieldset extends Fieldset implements InputFilterProviderInt
                     array(
                         'name' => 'User\Form\NoOtherEntityExists',
                         'options' => array(
-                            'object_repository' => $this->objectManager->getRepository('User\Entity\Users'),
+                            'object_repository' => $this->objectManager->getRepository('User\Entity\User'),
                             'fields' => 'u_email',
-                            'id' => $this->getObject()->getId(),
+                            'id' => $this->getObject()->getIuXrefUId(),
                             'id_getter' => 'getId',
                             'messages' => array(
                                 'User\Form\NoOtherEntityExists'::ERROR_OBJECT_FOUND => "Email address '%value%' already exists",
@@ -123,43 +138,46 @@ class userProfileFormFieldset extends Fieldset implements InputFilterProviderInt
                 ),
             ),
 
-            'u_nickname' => array(
-                'required' => false,
-            ),
-
             'u_mobile_phone' => array(
                 'required' => false,
                 'validators' => array(
                     array(
-                        'name'    => 'StringLength',
+                        'name' => 'StringLength',
                         'options' => array(
-                                'encoding' => 'UTF-8',
-                                'min' => 11,
-                             ),
+                            'min' => 11,
+                        ),
                     ),
                     array(
                         'name' => 'User\Form\NoOtherEntityExists',
                         'options' => array(
-                            'object_repository' => $this->objectManager->getRepository('User\Entity\Users'),
+                            'object_repository' => $this->objectManager->getRepository('User\Entity\User'),
                             'fields' => 'u_mobile_phone',
-                            'id' => $this->getObject()->getId(),
+                            'id' => $this->getObject()->getIuXrefUId(),
                             'id_getter' => 'getId',
                             'messages' => array(
-                                'User\Form\NoOtherEntityExists'::ERROR_OBJECT_FOUND => "Phone number '%value%' already exists",
+                                'DoctrineModule\Validator\NoObjectExists'::ERROR_OBJECT_FOUND => "Phone number '%value%' already exists",
                             ),
                         ),
                     ),
                 ),
-   
             ),  
 
-            'u_fixed_phone' => array(
+
+            'iu_nickname' => array(
+                'required' => false,
+            ),
+
+            'iu_fixed_phone' => array(
                 'required' => false,
             ),  
 
-            'u_wechat' => array(
+            'iu_wechat' => array(
                 'required' => false,
             ),  
+
+            'iu_labels' => array(
+                'required' => false,
+            ),
         );
     }
 }

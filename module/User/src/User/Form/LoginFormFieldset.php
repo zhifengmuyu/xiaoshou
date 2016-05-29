@@ -1,7 +1,7 @@
 <?php
 namespace User\Form;
  
-use User\Entity\Users;
+use User\Entity\User;
 use Doctrine\Common\Persistence\ObjectManager;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
 use Zend\Form\Fieldset;
