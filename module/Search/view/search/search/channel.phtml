@@ -1,0 +1,10 @@
+<h1>all channels</h1>
+
+<?php foreach ($this->channels as $channel): ?>
+	<table>
+		<tr>
+			<td><?php echo $channel->getCName() ?></td>
+			<td><?php echo $channel->getCDescription() ?></td>
+		</tr>
+	</table>
+<?php endforeach ?>

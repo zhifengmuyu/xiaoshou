@@ -13,7 +13,8 @@ return array(
         'User',
         //'CompanyUser',
         //'IndividualUser',
-        'Sp',
+        'Product',
+        'Channel',
         'Search',
     ),
     'module_listener_options' => array(

@@ -1,0 +1,20 @@
+<h1>Channels</h1>
+<a href='channel/add'><?php echo $this->translate('Add') ?></a>
+<table>
+	<?php foreach ($this->channels as $channel): ?>
+		<tr>
+			<td><?php echo $channel->getCName() ?></td>
+			<td><?php echo $channel->getCDescription() ?></td>
+			<td>
+				<a href="channel/edit/<?php echo $channel->getId() ?>">Edit</a>
+				<a href="channel/delete/<?php echo $channel->getId() ?>">Delete</a>
+			</td>
+		</tr>
+	<?php endforeach ?>
+</table>
+<?php foreach ($this->channels as $channel): ?>
+<article>
+    <h1><?= $channel->getCName() ?></h1>
+    <p><?= $channel->getCDescription() ?></p>
+</article>
+<?php endforeach ?>

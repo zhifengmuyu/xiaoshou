@@ -19,36 +19,37 @@ class SearchController extends AbstractActionController
         ));
     }
 
-    public function buyerAction()
+    public function productAction()
     {
         if ($this->request->isPost()) {
             $name = $this->params()->fromPost('name');
             $qb = $this->getObjectManager()->createQueryBuilder();
-            $qb->select('u')
-               ->from('User\Entity\Users', 'u')
-               ->where('u.u_channels like ?1')
+            $qb->select('p')
+               ->from('Product\Entity\Product', 'p')
+               ->where('lower(p.p_name) like ?1')
+               ->orWhere('lower(p.p_description) like ?1')
                ->setParameter(1, '%' . $name . '%');
-            $allBuyers = $qb->getQuery()->getResult();
+            $products = $qb->getQuery()->getResult();
             return new viewModel(array(
-                'allBuyers' => $allBuyers,
+                'products' => $products,
             ));            
         } else {
-
         }
     }
 
-    public function sellerAction()
+    public function channelAction()
     {
         if ($this->request->isPost()) {
             $name = $this->params()->fromPost('name');
             $qb = $this->getObjectManager()->createQueryBuilder();
-            $qb->select('u')
-               ->from('User\Entity\Users', 'u')
-               ->where('u.u_products like ?1')
+            $qb->select('c')
+               ->from('Channel\Entity\Channel', 'c')
+               ->where('lower(c.c_name) like ?1')
+               ->orWhere('lower(c.c_description) like ?1')
                ->setParameter(1, '%' . $name . '%');
-            $allSellers = $qb->getQuery()->getResult();
+            $channels = $qb->getQuery()->getResult();
             return new viewModel(array(
-                'allSellers' => $allSellers,
+                'channels' => $channels,
             ));            
         } else {
 
